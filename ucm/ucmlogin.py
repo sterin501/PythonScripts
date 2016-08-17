@@ -6,8 +6,6 @@ from lxml import html
 USERNAME = "weblogic"
 PASSWORD = "welcome1"
 
-#LOGIN_URL = "http://10.184.36.144:16471/cs/login/j_security_check"
-#URL = "http://10.184.36.144:16471/cs/idcplg?IdcService=DOC_INFO&dID=3223&dDocName=STJACOBPC1IDCO003622&IsSoap=1"
 
 LOGIN_URL = "http://ucm.company.com:16200/cs/login/j_security_check"
 URL = "http://ucm.company.com:16200/cs/idcplg?IdcService=DOC_INFO&dID=414&dDocName=AWSECM000414&IsSoap=1 "

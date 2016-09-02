@@ -24,10 +24,7 @@ payload = {
     }
 result = session_requests.post(LOGIN_URL, data = payload, headers = dict(referer = LOGIN_URL))
 newresult = session_requests.get("http://www.moneycontrol.com/bestportfolio/wealth-management-tool/investments#port_top")
-name='"networth_disp"'
-
-#print (newresult.content)
-
+## BeautifulSoup
 soup = bs4.BeautifulSoup(newresult.content,"lxml")
 table  = soup.find_all("div", "rightCont")
 

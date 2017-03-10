@@ -1,5 +1,6 @@
 #!/bin/python
 import urllib, urllib2,re,bs4,cookielib,sys,time
+from gi.repository import Notify
 
 LIVGETURL="http://m.cricbuzz.com/cricket-match/live-scores"
 cj = cookielib.CookieJar()
@@ -13,7 +14,7 @@ Is4thInningsInTest=False
 MatchSummaryURL=''
 
 
-def getIndiaURL(teamName):                               ## Getting Live URL matches and checking match is Test or not
+def getIndiaURL(teamName):
     global IsTestMatch
     global MatchSummaryURL
     MatchSummaryURL=''
@@ -22,7 +23,7 @@ def getIndiaURL(teamName):                               ## Getting Live URL mat
     except Exception as e:
      print e
      print 'check the proxy setting http_proxy'
-     exit()
+     sys.exit()
     soup = bs4.BeautifulSoup(resp.read(),"lxml")
     table  = soup.find_all("div", "btn-group cbz-btn-group")
     for k in table:
@@ -70,7 +71,7 @@ def getLiveScore (MatchSummaryURL):
     time.sleep(2)
     if (loopc == 5):
      print ('Connection is not resolved , check the network , exiting')
-     exit()
+     sys.exit()
  return CricketObject 
 
   
@@ -131,7 +132,7 @@ def printCricketScore ( CricketObject ):
    if ( CricketObject[2][3] != 'BATNAME2'):
     print (CricketObject[2][3] + '   ' + str (CricketObject[2][4])+ '('+str (CricketObject[2][5])+')')
     print plines+'\n'
- elif ( CricketObject[5][3] == 0.0  ):
+ elif ( not IsTestMatch or CricketObject[5][3] == 0.0  ):
    IsSecondBatting=True
    print (CricketObject[1][0] + '   ' + str (CricketObject[1][1]) + '/'+str (CricketObject[1][2]) )
    print (CricketObject[3][0] + '   ' + str (CricketObject[3][1]) + '/'+str (CricketObject[3][2]) + ' in ' + str (CricketObject[3][3]) + '  in Overs ..')
@@ -143,7 +144,7 @@ def printCricketScore ( CricketObject ):
  elif ( CricketObject[7][3] == 0.0 ):
    print (CricketObject[1][0] + '   ' + str (CricketObject[1][1]) + '/'+str (CricketObject[1][2]) )
    print (CricketObject[3][0] + '   ' + str (CricketObject[3][1]) + '/'+str (CricketObject[3][2]) )
-   print (CricketObject[5][0] + '   ' + str (CricketObject[5][1]) + '/'+str (CricketObject[5][2]) + ' in ' + str (CricketObject[3][3]) + '  in Overs ...')
+   print (CricketObject[5][0] + '   ' + str (CricketObject[5][1]) + '/'+str (CricketObject[5][2]) + ' in ' + str (CricketObject[5][3]) + '  in Overs ...')
    print plines+'\n'
    print (CricketObject[6][0] + '   ' + str ( CricketObject[6][1])+ '('+str (CricketObject[6][2])+')')
    if ( CricketObject[6][3] != 'BATNAME2'):
@@ -176,6 +177,7 @@ def CompareCricketObjects (CricketObject,CricketObjectInLopp):
   else:
    print 'chage in Summary , alret'
    returnValue=True
+   alertDesktop("Alert",CricketObject[0])
    return  returnValue 
  if  IsSecondBatting:
    if (CompareTeamRunsWickets (CricketObject[3],CricketObjectInLopp[3])):
@@ -201,28 +203,40 @@ def CompareTeamRunsWickets (TeamRuns,TeamRunsInLoop):
   #print  ( TeamRunsInLoop)
   TeamRunsinloop = TeamRunsInLoop[1]
   TeamRuns=TeamRuns[1]
+  OverinLoop=TeamRunsInLoop[3]
   if (wicket != wicketinloop):
    print (str (wicket)+' --> '+str (wicketinloop) +' Wicket Gone')
    returnValue=True
    LiveCricketOb=getBatsManBlowerPRC()
    print ("\nLast Wicket   : "+LiveCricketOb[3][1]+"")
+   alertDesktop("Wicket"+str (wicket)+' --> '+str (wicketinloop),LiveCricketOb[3][1])
   if (TeamRunsinloop >= ((TeamRuns/50)+1)*50 ):
-    AlertInWordsLatest=CricketObject[3][0]+' Scored '+ str (TeamRunsinloop)
+    AlertInWordsLatest=TeamRunsInLoop[0]+' Scored '+ str (TeamRunsinloop) +"/"+ str (wicketinloop) +' in  '+str (OverinLoop)+' Overs'
     if ( AlertInWordsLatest != AlertInWords):
      print (AlertInWordsLatest + ' Alert')
-     AlertInWordsLatest=AlertInWords
+     AlertInWords=AlertInWordsLatest
      returnValue=True
+     alertDesktop("ScoreUpdate",AlertInWordsLatest)
+  if (OverinLoop%10.0 == 0.0):
+   AlertInWordsLatest=TeamRunsInLoop[0]+" "+ str (TeamRunsinloop) +"/"+str (wicketinloop) +' in  '+str (OverinLoop)+' Overs'
+   if ( AlertInWordsLatest != AlertInWords):
+     print (AlertInWordsLatest + ' Alert')
+     AlertInWords=AlertInWordsLatest
+     returnValue=True
+     alertDesktop("ScoreUpdate",AlertInWordsLatest)
   return returnValue
  
 
 
-def isMatchLiveNow (CricketObject):
+def isMatchLiveNow (CricketObject,InLoop):
  global IsMatchLive
  stopStrings=['won','Stumps','Break']
  for kk in  stopStrings:
   if ( kk in CricketObject[0]):
    IsMatchLive=False
    print 'Not Live Now'
+   if InLoop:
+    alertDesktop("Summary",CricketObject[0])
 
 
 def printLiveCricketScore(CricketObjectInLopp):
@@ -233,7 +247,7 @@ def printLiveCricketScore(CricketObjectInLopp):
   plines=plines+'_'
  finalStringToprint=finalStringToprint+plines+'\n\n'+psummary+'\n\n'+plines+'\n\n'
  count=1
- while (count < 8):
+ while (count < len (CricketObjectInLopp)):
   if not ('TEAM' in CricketObjectInLopp[count][0] ):
    finalStringToprint="\n"+finalStringToprint+CricketObjectInLopp[count][0]+"  "+str (CricketObjectInLopp[count][1])+"/"+str (CricketObjectInLopp[count][2])+"  "+str (CricketObjectInLopp[count][3])+" Over \n"
   count=count+2 
@@ -253,7 +267,7 @@ def printLiveCricketScore(CricketObjectInLopp):
 
 def getBatsManBlowerPRC():
  global MatchSummaryURL 
- liveCricketObject=['RUNRATE',['BAT1',0,'BALS','4s','6s','SR','BAT2',0,'BALS','4s','6s','SR'],['BOW','O','M','R','W'],['PAT','LASW','REC']]
+ liveCricketObject=['RUNRATE',['BAT1',0,'BALS','4s','6s','SR','BAT2',0,'BALS','4s','6s','SR'],['BOW','O','M','R','W'],['PAT','Last Wicket','REC']]
  commentry=MatchSummaryURL.replace('cricket-match-summary','cricket-commentary')
  resp= opener.open(commentry)
  soup = bs4.BeautifulSoup(resp.read(),"lxml")
@@ -267,7 +281,7 @@ def getBatsManBlowerPRC():
      liveCricketObject[1]= getLiveBatsMan(getFormatedScoreForBBPRC ( str (kkm)))
     if (re.search("Bowling",str (kkm))):
      liveCricketObject[2]= getLiveBolwer (getFormatedScoreForBBPRC ( str (kkm)))
-    if (re.search("Partnership",str (kkm))):
+    if (re.search("Last wkt",str (kkm))):
      liveCricketObject[3]= getPatLastRec  (getFormatedScoreForBBPRC ( str (kkm)))
  return liveCricketObject
 
@@ -305,7 +319,7 @@ def getLiveBolwer (stringToProcess):
 
 def getPatLastRec(stringToProcess):
  newSrin=stringToProcess.split('-')
- PatLastRec=['PAT','Las','REC']
+ PatLastRec=['0','Las','REC']
  PatLastRec[0]=newSrin[2]
  count=0
  LastWiIndex=0
@@ -323,6 +337,11 @@ def getPatLastRec(stringToProcess):
  PatLastRec[2]= newSrin[RecIndex+1]
  return PatLastRec
 
+def alertDesktop (summary,stringtodisplay):
+ Notify.init("CricketUpdate")
+ Notify.Notification.new("CricUpdate  :   "+stringtodisplay).show()
+ notification = Notify.Notification.new(summary,stringtodisplay)
+ notification.show()
 
 
 if __name__ == '__main__':
@@ -336,9 +355,9 @@ if __name__ == '__main__':
      print MatchSummaryURL
   else :
      print 'No Live URL avalible for team ' +  defaultTeam 
-     exit()
+     sys.exit()
   CricketObject=getLiveScore(MatchSummaryURL)
-  isMatchLiveNow (CricketObject)
+  isMatchLiveNow (CricketObject,False)
   printCricketScore(CricketObject)
   count=0
   towaitSec=6
@@ -346,7 +365,7 @@ if __name__ == '__main__':
    print ( str (count * towaitSec) + 'Sec Live')
    CricketObjectInLopp=getLiveScore(MatchSummaryURL)
    printLiveCricketScore(CricketObjectInLopp)
-   isMatchLiveNow(CricketObjectInLopp)
+   isMatchLiveNow(CricketObjectInLopp,True)
    time.sleep( towaitSec )
    if (CompareCricketObjects(CricketObject,CricketObjectInLopp)):
     CricketObject=CricketObjectInLopp

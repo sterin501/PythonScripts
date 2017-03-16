@@ -1,10 +1,9 @@
 #!/bin/python
-import urllib, urllib2,re,bs4,cookielib,sys,time
+import urllib, urllib2,re,bs4,cookielib,sys,time,argparse
 from plyer import notification
 
 LIVGETURL="http://m.cricbuzz.com/cricket-match/live-scores"
 cj = cookielib.CookieJar()
-opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 IsMatchLive=True
 AlertInWords=''
 AlertInWordsLatest=''
@@ -12,6 +11,18 @@ IsSecondBatting=False
 IsTestMatch=False
 Is4thInningsInTest=False
 MatchSummaryURL=''
+parser = argparse.ArgumentParser()
+parser.add_argument('-t', '--team', default='ind-',help='Team Name to search ,default team is india (ind).')
+parser.add_argument('-p', '--proxy', default='',help='http proxy details to connect')
+parser.add_argument('-r', '--refreshtime', default=30.0,help='Refresh time . Default is 30 sec')
+args = parser.parse_args()
+opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
+if (len (args.proxy) > 0):
+ proxy = urllib2.ProxyHandler({'http': args.proxy})
+ opener = urllib2.build_opener(proxy)
+
+
+
 
 
 def getIndiaURL(teamName):
@@ -333,42 +344,47 @@ def getPatLastRec(stringToProcess):
  LastWi=''
  for i in range (LastWiIndex+1,RecIndex):
   LastWi=LastWi+newSrin[i]
+ if ('Partnership:' in LastWi):
+   LastWi=''
  PatLastRec[1]= LastWi
  PatLastRec[2]= newSrin[RecIndex+1]
  return PatLastRec
 
 def alertDesktop (summary,stringtodisplay):
- notification.notify(
-    title=summary,
-    message=stringtodisplay,
-    app_name='CricketUpdate',
-                      )
+ try :
+  notification.notify(
+     title=summary,
+     message=stringtodisplay,
+     app_name='CricketUpdate',
+                       )
+ except Exception as e:
+  print ' Not able to alert desktop'
+  print e 
 
 
 if __name__ == '__main__':
-  defaultTeam="ind-"
-  if ( len(sys.argv) !=2):
-   MatchSummaryURL = getIndiaURL(defaultTeam)
-  else:
-   defaultTeam=sys.argv[1]
-   MatchSummaryURL = getIndiaURL(defaultTeam)
+  MatchSummaryURL = getIndiaURL(args.team)
   if ( len (MatchSummaryURL) > 1):
      print MatchSummaryURL
   else :
-     print 'No Live URL avalible for team ' +  defaultTeam 
+     print 'No Live URL avalible for team ' +  args.team 
      sys.exit()
   CricketObject=getLiveScore(MatchSummaryURL)
   isMatchLiveNow (CricketObject,False)
   printCricketScore(CricketObject)
   count=0
-  towaitSec=6
-  while IsMatchLive:
-   print ( str (count * towaitSec) + 'Sec Live')
-   CricketObjectInLopp=getLiveScore(MatchSummaryURL)
-   printLiveCricketScore(CricketObjectInLopp)
-   isMatchLiveNow(CricketObjectInLopp,True)
-   time.sleep( towaitSec )
-   if (CompareCricketObjects(CricketObject,CricketObjectInLopp)):
-    CricketObject=CricketObjectInLopp
-    print 'SWAPPED'
-   count=count+1
+  towaitSec=float (args.refreshtime)
+  try:
+   while IsMatchLive:
+    print ( str (count * towaitSec) + ' Sec Live')
+    CricketObjectInLopp=getLiveScore(MatchSummaryURL)
+    printLiveCricketScore(CricketObjectInLopp)
+    isMatchLiveNow(CricketObjectInLopp,True)
+    time.sleep( towaitSec )
+    if (CompareCricketObjects(CricketObject,CricketObjectInLopp)):
+     CricketObject=CricketObjectInLopp
+     print 'SWAPPED'
+    count=count+1
+  except KeyboardInterrupt :
+    print 'Stopping'
+    sys.exit()

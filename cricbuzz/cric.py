@@ -143,7 +143,7 @@ def printCricketScore ( CricketObject ):
  elif ( CricketObject[7][3] == 0.0 ):
    print (CricketObject[1][0] + '   ' + str (CricketObject[1][1]) + '/'+str (CricketObject[1][2]) )
    print (CricketObject[3][0] + '   ' + str (CricketObject[3][1]) + '/'+str (CricketObject[3][2]) )
-   print (CricketObject[5][0] + '   ' + str (CricketObject[5][1]) + '/'+str (CricketObject[5][2]) + ' in ' + str (CricketObject[3][3]) + '  in Overs ...')
+   print (CricketObject[5][0] + '   ' + str (CricketObject[5][1]) + '/'+str (CricketObject[5][2]) + ' in ' + str (CricketObject[5][3]) + '  in Overs ...')
    print plines+'\n'
    print (CricketObject[6][0] + '   ' + str ( CricketObject[6][1])+ '('+str (CricketObject[6][2])+')')
    if ( CricketObject[6][3] != 'BATNAME2'):
@@ -341,7 +341,7 @@ if __name__ == '__main__':
   isMatchLiveNow (CricketObject)
   printCricketScore(CricketObject)
   count=0
-  towaitSec=6
+  towaitSec=30
   while IsMatchLive:
    print ( str (count * towaitSec) + 'Sec Live')
    CricketObjectInLopp=getLiveScore(MatchSummaryURL)

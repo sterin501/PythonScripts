@@ -1,6 +1,6 @@
 #!/bin/python
 import urllib, urllib2,re,bs4,cookielib,sys,time,argparse
-from plyer import notification
+from gi.repository import Notify
 
 LIVGETURL="http://m.cricbuzz.com/cricket-match/live-scores"
 cj = cookielib.CookieJar()
@@ -188,7 +188,7 @@ def CompareCricketObjects (CricketObject,CricketObjectInLopp):
   else:
    print 'chage in Summary , alret'
    returnValue=True
-   alertDesktop("Alert",CricketObject[0])
+   alertDesktop("Alert",CricketObjectInLopp[0])
    return  returnValue 
  if  IsSecondBatting:
    if (CompareTeamRunsWickets (CricketObject[3],CricketObjectInLopp[3])):
@@ -241,7 +241,7 @@ def CompareTeamRunsWickets (TeamRuns,TeamRunsInLoop):
 
 def isMatchLiveNow (CricketObject,InLoop):
  global IsMatchLive
- stopStrings=['won','Stumps','Break']
+ stopStrings=['won','Stumps','Break','drawn']
  for kk in  stopStrings:
   if ( kk in CricketObject[0]):
    IsMatchLive=False
@@ -350,13 +350,23 @@ def getPatLastRec(stringToProcess):
  PatLastRec[2]= newSrin[RecIndex+1]
  return PatLastRec
 
+#def alertDesktop (summary,stringtodisplay):
+# try :
+#  notification.notify(
+#     title=summary,
+#     message=stringtodisplay,
+#     app_name='CricketUpdate',
+#                       )
+# except Exception as e:
+#  print ' Not able to alert desktop'
+#  print e 
+
+
 def alertDesktop (summary,stringtodisplay):
  try :
-  notification.notify(
-     title=summary,
-     message=stringtodisplay,
-     app_name='CricketUpdate',
-                       )
+  Notify.init("CricketUpdate")
+  notification = Notify.Notification.new(summary,stringtodisplay)
+  notification.show()
  except Exception as e:
   print ' Not able to alert desktop'
   print e 

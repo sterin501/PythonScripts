@@ -1,0 +1,9 @@
+Dataabase server 192.168.36.139 is down  .
+
+Most of the 12c WCC instances are depends on this server 
+
+Please check machine power , LAN cable etc near Sterin's Location 
+
+
+<br> Thanks </br>
+<br> Sterin </br>

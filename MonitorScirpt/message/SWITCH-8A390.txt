@@ -1,0 +1,14 @@
+ Switch at 8A390 Opp Harshali  is down
+<br> </br>
+
+1. Check the lights . 4 lights should be in blink mode ( not static)
+<br> </br>
+
+2.One black Cable should connect to LAN PORT , which is at bottom 
+
+<br> </br>
+
+Thanks
+<br> </br>
+Sterin
+

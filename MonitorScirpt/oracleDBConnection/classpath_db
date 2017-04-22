@@ -1,0 +1,5 @@
+LIB=`pwd`
+CLASSPATH=$CLASSPATH:$LIB/lib/ojdbc6.jar:.
+
+export CLASSPATH
+

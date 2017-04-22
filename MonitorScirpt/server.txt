@@ -1,0 +1,23 @@
+PING ECMTEST   192.168.36.139 sterin.jacob@company.com,tushar.t.gupta@company.com 
+#PING TESTTEST  192.168.43.144 sterin.jacob@company.com
+PING SWITCH-8A390 192.16.43.127,192.16843.139,192.16843.145 sterin.jacob@company.com,tushar.t.gupta@company.com
+PINGPORT UCM44PORT 192.168.10.1:4111 sterin.jacob@company.com
+JDBCORCL  UCMDCLDATASOURCE 192.168.10.1:1521:orcl,STEDCL_OCS,welcome1	 sterin.jacob@company.com
+URLPING   UCMDCLWEB    http://192.168.10.1:16471/cs/ sterin.jacob@company.com
+
+
+## PING to ping server 
+
+#### PING <ServerName> <IP> <EmailIDs to alert> ## multiple IP can be provided with ","
+
+## PING PORT , it will ping to port with server 
+
+#### PINGPORT  <ServerName> <IP:PORT> <EmailIDs to alert>
+
+##  JDBCORCL to ping oracle DB using jdbc driver
+
+#### JDBCORCL  <DB INSTANCE> <IP:1521:orcl,Schename,Password> <EmailIDs to alert>
+
+## URLPING to make http connection to URL 
+
+#### URLPING  <ServerName> <URL> <EmailIDs to alert>

@@ -1,0 +1,26 @@
+<!doctype html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static',filename='css/main.css') }}">
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static',filename='js/datestuff.js') }}"></script>
+
+
+</head>
+
+<body>
+<title>Hello from Flask</title>
+{% if path == "/" %}
+<h1>Home Page</h1>
+{% endif %}
+{% if name %}
+<h1>Date from Pyton {{ name }}</h1>
+<p> with out css </p1>
+{% else %}
+  <h1>Hello, World!</h1>
+{% endif %}
+
+
+<p id="demo"></p>
+
+
+</body>

@@ -23,10 +23,7 @@ proxyDict = {
 
 torrentsite=configJson['torrentsite']
 malayalamFroum=configJson['malayalamFroum']
-googleResultCount=5
-googleKey="AIzaSyCcVhjXmtOL86HXNi43fcreT7FfK6"
-gooelcx="010861975742032498978:dxajm1m_24u"
-googleURLend="&sa"
+language=configJson['language']
 
 
 def getLKD():
@@ -142,7 +139,7 @@ def getMalayalamThreads(URL):
          for kk in subt:
              #print kk['href'] + "  " + kk['title']
              movieLink=kk['href']
-             movieName=kk['title'].split("Malayalam")[0]
+             movieName=kk['title'].split(language)[0]
              #print ( movieName +"-->"+movieLink)
              index=searchinList(ListofmovieDist,movieName)
              if index:

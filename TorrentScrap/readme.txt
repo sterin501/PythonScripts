@@ -5,6 +5,9 @@
 5. Comment # starts of the line will make script to look for movie name again from torrent site
 6. Delete the movie Name from movie.txt , script will look for movie Link again from torrent site
 
+Edit : config.json  for proxy server and google Search key
+
+
 Example of output :
 
 ./torrentSeacrch.py 

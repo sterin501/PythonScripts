@@ -17,7 +17,7 @@ proxyDict = {
 }
 
 
-def getFromGoogleAPI(keyword):
+def getGoogleAPI(keyword):
 
   pnr_data =                 {
 
@@ -38,7 +38,7 @@ def getFromGoogleAPI(keyword):
   return URLS 
 
 
-def getFrommGoogle(keyword):
+def getFrommGoogleCOM(keyword):
     pnr_data =                 {
 
 
@@ -63,14 +63,10 @@ def getFrommGoogle(keyword):
            URLS.append("http"+url3)
     print URLS
 
-def simpleUCM():
-  url="http://10.184.36.144:16471/cs/idcplg?IdcService=GET_SEARCH_RESULTS&SortField=dInDate&SortOrder=Desc&ResultCount=20&QueryText="
-  result = session_requests.get(url,proxies=proxyDict)
-  print result.content
+
 
  
 if __name__ == '__main__':
- #URLS=getGoogleData("malayalam")
- #print URLS
- #getFrommGoogle("Ajith lv")
- simpleUCM()
+ URLS=getGoogleAPI("malayalam")
+ print URLS
+ getFrommGoogleCOM("Ajith lv")

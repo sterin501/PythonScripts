@@ -6,23 +6,16 @@ import bs4
 USERNAME = "AjithAgarkar"
 PASSWORD = "cricket1234"
 
-LOGIN_URL = "http://www.moneycontrol.com/portfolio_plus/sso/login_verify_mc_new1.php"
+LOGIN_URL = "https://accounts.moneycontrol.com/login/index"
 URL= "http://www.moneycontrol.com/bestportfolio/wealth-management-tool/investments#port_top"
 
 session_requests = requests.session()
-wresult = session_requests.get(LOGIN_URL)
 # Create payload
 payload = {
-          'login_id' : USERNAME, 
-          'password' : PASSWORD ,
-          'keep_signed' : '1',
-          'ss' : 'PORT~@',
-          'sectionid' : 'PORT',
-          'add_bot_form' : 'MTQ3MjYyNjA4ODhVQlo5WTFZQVk3WjNXRlZJVkNZQ1kyVjRaRlU2VQ==' ,
-          'sort' : '' ,
-          'referer' : '' 
+          'email' : USERNAME,
+          'pwd' : PASSWORD ,
     }
-result = session_requests.post(LOGIN_URL, data = payload, headers = dict(referer = LOGIN_URL))
+result = session_requests.post(LOGIN_URL, data = payload)
 newresult = session_requests.get("http://www.moneycontrol.com/bestportfolio/wealth-management-tool/investments#port_top")
 ## BeautifulSoup
 soup = bs4.BeautifulSoup(newresult.content,"lxml")
